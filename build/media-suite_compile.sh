@@ -2348,6 +2348,26 @@ if { [[ $mpv != n ]] ||
     do_checkIfExist
 fi
 
+_check=(libwhisper.a libggml{,-{base,cpu,vulkan}}.a whisper.{pc,h} ggml{,-{alloc,backend,cpu,vulkan}}.h)
+if [[ $ffmpeg != no ]] && enabled whisper &&
+    do_vcs "$SOURCE_REPO_WHISPER_CPP"; then
+    do_uninstall "${_check[@]}"
+    do_pacman_install omp
+    sed -i "s|vulkan-1|vulkan|" "$MINGW_PREFIX/share/cmake/Modules/FindVulkan.cmake"
+    extracommands=(-DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DWHISPER_BUILD_TESTS=OFF -DWHISPER_BUILD_EXAMPLES=OFF -DWHISPER_BUILD_SERVER=OFF)
+    extracommands+=(-DWHISPER_USE_SYSTEM_GGML=OFF -DGGML_CCACHE=OFF -DGGML_NATIVE=OFF -DGGML_SSE42=ON -DGGML_AVX=ON -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_BMI2=ON -DGGML_F16C=ON -DGGML_OPENMP=ON -DGGML_OPENCL=OFF -DGGML_VULKAN=ON)
+    do_cmakeinstall "${extracommands[@]}"
+    for ggmlafile in "$LOCALDESTDIR"/lib/ggml*.a; do
+        [[ -f "$ggmlafile" ]] || continue
+        local ggmlabasename=$(basename "$ggmlafile")
+        [[ "$ggmlabasename" != lib* ]] && mv -f "$ggmlafile" "$LOCALDESTDIR/lib/lib${ggmlabasename}"
+    done
+    sed -i "s|-lggml  -lggml-base -lwhisper|-lwhisper -lggml -lggml-base -lggml-cpu -lomp -lggml-vulkan -lpthread|" "$LOCALDESTDIR"/lib/pkgconfig/whisper.pc
+    echo "Requires: vulkan" >> "$LOCALDESTDIR"/lib/pkgconfig/whisper.pc
+    do_checkIfExist
+    unset extracommands
+fi
+
 if [[ $exitearly = EE6 ]]; then
     do_simple_print -p '\n\t'"${orange}Exit due to env var MABS_EXIT_EARLY set to EE6"
     return
