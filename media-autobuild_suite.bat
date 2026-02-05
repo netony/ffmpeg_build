@@ -122,19 +122,19 @@ libopenmpt version3 librav1e libsrt libgsm libvmaf libsvtav1
 
 :: options also available with the suite
 set ffmpeg_options_full=chromaprint decklink frei0r libaribb24 libbs2b libcaca ^
-libcdio libflite libfribidi libgme libilbc libsvthevc ^
-libsvtvp9 libkvazaar libmodplug librist librtmp librubberband #libssh ^
-libtesseract libxavs libzmq libzvbi openal libcodec2 ladspa #vapoursynth #liblensfun ^
+libcdio libflite libfribidi libgme libilbc #libsvthevc ^
+libsvtvp9 libkvazaar libmodplug librist librtmp librubberband libssh ^
+libtesseract libxavs libzmq libzvbi openal libcodec2 ladspa vapoursynth liblensfun ^
 libglslang vulkan libdavs2 libxavs2 libuavs3d libplacebo libjxl libvvenc libvvdec liblc3 audiotoolbox ^
 libsvtjpegxs
 
 :: options also available with the suite that add shared dependencies
-set ffmpeg_options_full_shared=opencl opengl cuda-nvcc libopenh264
+set ffmpeg_options_full_shared=opencl opengl cuda-nvcc #libopenh264
 
 :: built-ins
-set mpv_options_builtin="#-Dcplayer=true" #manpage-build #lua #javascript ^
-#libbluray #uchardet #rubberband #lcms2 #libarchive #libavdevice ^
-#shaderc #spirv-cross #d3d11 #jpeg #vapoursynth #vulkan
+set mpv_options_builtin="-Dcplayer=true" manpage-build #lua javascript ^
+libbluray uchardet rubberband lcms2 libarchive libavdevice ^
+shaderc spirv-cross #d3d11 jpeg vapoursynth vulkan
 
 :: overriden defaults
 set mpv_options_basic="-Dlua=luajit"
